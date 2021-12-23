@@ -1,52 +1,56 @@
-from lib.utils import take_one, find_patterns
+from typing import Callable, Dict
+from lib.utils import take_one, find_patterns, read_mock_data
 from lib.usage import usage
 from argparse import ArgumentParser, RawTextHelpFormatter
 from pathlib import Path
-import json
 import logging
 
-logger = logging.getLogger('Ox4Shell')
+logger = logging.getLogger("Ox4Shell")
+
+mock_data_patcher = read_mock_data()
 
 
-with open("mock.json", "r") as f:
-    mock_data_patcher = json.load(f)    
-
-
-def nop(full_match, _):
+def nop(full_match: str, _: str) -> str:
     return full_match
 
 
 # Handles the cases of: ${xxx:yyy:zzz:-www}
-def str_substitutor_lookup(full_match, inner_group):
+def str_substitutor_lookup(full_match: str, inner_group: str) -> str:
     parts = inner_group.split(":")
+    parts_length = len(parts)
+    got_default_value = inner_group.count(":-") > 0
 
-    match len(parts):
-        # no values, return the full match
-        case 0:
-            return full_match
-        # single variable, empty brackets (${})
-        case n if n == 1 and parts[0] == "":
+    # no values, return the full match
+    if parts_length == 0:
+        return full_match
+
+    # single variable
+    if parts_length == 1:
+
+        # empty brackets (${})
+        if parts[0] == "":
             return ""
-        case n if n == 1:
-            return mock_data_patcher.get(
-                inner_group.lower(), 
-                f"<{inner_group.lower()}>"
-            )
-        # we got some values, get the default one (last)
-        case n if n > 1 and inner_group.count(":-") > 0:
+
+        return mock_data_patcher.get(inner_group.lower(), f"<{inner_group.lower()}>")
+
+    # we got some values
+    if parts_length > 1:
+        # get the default one (last)
+        if got_default_value:
             _, _, tail = inner_group.partition(":-")
             return tail
-        # we got some values, no default value provided, return the key
-        case n if n > 1 and inner_group.count(":-") == 0:
+        # no default value provided, return the key
+        else:
             return parts[1]
-        # unknown
-        case _:
-            return full_match
+
+    # unknown
+    return full_match
+
 
 nop_with_default = str_substitutor_lookup
 
 # Handles the cases of: ${lower:aaAAaa}
-def str_lower_lookup(_, inner_group):
+def str_lower_lookup(_: str, inner_group: str) -> str:
     parts = inner_group.split(":")
 
     if len(parts) < 2:
@@ -56,7 +60,7 @@ def str_lower_lookup(_, inner_group):
 
 
 # Handles the cases of: ${upper:aaAAaa}
-def str_upper_lookup(_, inner_group):
+def str_upper_lookup(_: str, inner_group: str) -> str:
     parts = inner_group.split(":")
 
     if len(parts) < 2:
@@ -66,7 +70,7 @@ def str_upper_lookup(_, inner_group):
 
 
 # Handles the cases of: ${date:1}
-def date_lookup(_, inner_group):
+def date_lookup(_: str, inner_group: str) -> str:
     parts = inner_group.split(":")
 
     if len(parts) != 2:
@@ -77,7 +81,7 @@ def date_lookup(_, inner_group):
 
 
 # Handles the cases of: ${env:HOME} for example
-def mockable_lookup(full_match, inner_group):
+def mockable_lookup(full_match: str, inner_group: str) -> str:
     parts = inner_group.split(":")
 
     if len(parts) < 2:
@@ -85,10 +89,8 @@ def mockable_lookup(full_match, inner_group):
 
     mock_table_key = parts[0].lower()
     mock_table_value = parts[1].lower()
-    
-    mock_value = mock_data_patcher \
-        .get(mock_table_key, {}) \
-        .get(mock_table_value)
+
+    mock_value = mock_data_patcher.get(mock_table_key, {}).get(mock_table_value)
 
     if not mock_value:
         mock_value = str_substitutor_lookup(full_match, inner_group)
@@ -96,20 +98,20 @@ def mockable_lookup(full_match, inner_group):
     return mock_value
 
 
-known_lookups = {
-    "jndi": nop, 
-    "java": mockable_lookup, 
-    "sys": mockable_lookup, 
+known_lookups: Dict[str, Callable] = {
+    "jndi": nop,
+    "java": mockable_lookup,
+    "sys": mockable_lookup,
     "env": mockable_lookup,
     "os": nop_with_default,
-    "lower": str_lower_lookup, 
-    "upper": str_upper_lookup, 
-    "date": date_lookup
+    "lower": str_lower_lookup,
+    "upper": str_upper_lookup,
+    "date": date_lookup,
 }
 
 
 # handles each result we find
-def handle_match(full_match, inner_group, payload):
+def handle_match(full_match: str, inner_group: str, payload: str) -> str:
     lookup_identifier, *_ = inner_group.split(":")
 
     logger.debug(f"{full_match=}")
@@ -130,7 +132,7 @@ def handle_match(full_match, inner_group, payload):
     return payload
 
 
-def deobfuscate_patterns(payload):
+def deobfuscate_patterns(payload: str) -> str:
 
     pattern = take_one(find_patterns(payload))
 
@@ -139,11 +141,12 @@ def deobfuscate_patterns(payload):
         return payload
 
     # if we found a pattern, call the handle match function
-    payload = handle_match(*pattern, payload)
+    full_match, inner_group = pattern
+    payload = handle_match(full_match, inner_group, payload)
     return payload
 
 
-def deobfuscate(payload):
+def deobfuscate(payload: str) -> str:
     are_the_same = False
 
     while not are_the_same:
@@ -151,18 +154,27 @@ def deobfuscate(payload):
 
         if deobfuscated == payload:
             are_the_same = True
-    
+
         payload = deobfuscated
 
     return payload
 
-def main():
-    parser = ArgumentParser(prog='ox4shell',description=usage, formatter_class=RawTextHelpFormatter)
-    parser.add_argument('-d', '--debug', default=False, help='Enable debug mode', action="store_true")
+
+def main() -> None:
+    parser = ArgumentParser(
+        prog="ox4shell", description=usage, formatter_class=RawTextHelpFormatter
+    )
+    parser.add_argument(
+        "-d", "--debug", default=False, help="Enable debug mode", action="store_true"
+    )
 
     target_group = parser.add_mutually_exclusive_group(required=True)
-    target_group.add_argument('-p', '--payload', type=str, help='The payload to deobfuscate')
-    target_group.add_argument('-f', '--file', type=Path, help='A file containing payloads')
+    target_group.add_argument(
+        "-p", "--payload", type=str, help="The payload to deobfuscate"
+    )
+    target_group.add_argument(
+        "-f", "--file", type=Path, help="A file containing payloads"
+    )
 
     args = parser.parse_args()
 
@@ -178,7 +190,7 @@ def main():
             print(f"File {args.file} does not exists!")
             exit(1)
 
-        with args.file.open('r') as f:
+        with args.file.open("r") as f:
             for line in f:
                 deobfuscated = deobfuscate(line.strip())
                 print(deobfuscated)
@@ -186,6 +198,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
