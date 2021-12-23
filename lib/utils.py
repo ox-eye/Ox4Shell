@@ -1,21 +1,11 @@
 import json
 import re
-from typing import Any, Dict, Iterable, Optional, Tuple, TypeVar, Iterator
+from typing import Any, Dict, Tuple, Iterator
+from pathlib import Path
+import logging
 
 SIMPLE_PATTERN_REGEX = re.compile(r"(\$\{([^{}]*?)\})")
 NESTED_PATTERN_REGEX = re.compile(r"(\$\{(.*)\})")
-
-T = TypeVar("T")
-
-
-def take_one(iterable: Iterable[T]) -> Optional[T]:
-    first_item = None
-
-    for item in iterable:
-        first_item = item
-        break
-
-    return first_item
 
 
 def find_patterns(text: str) -> Iterator[Tuple[str, str]]:
@@ -27,5 +17,21 @@ def find_patterns(text: str) -> Iterator[Tuple[str, str]]:
 
 
 def read_mock_data() -> Dict[str, Any]:
-    with open("mock.json", "r") as f:
-        return json.load(f)
+    p = Path("mock.json")
+
+    if not p.exists():
+        raise Exception(f"Mock file {p} does not exists!")
+
+    with p.open("r") as f:
+        data: Dict[str, Any] = json.load(f)
+        return data
+
+
+def set_debug_level(logger: logging.Logger) -> None:
+    handler: logging.Handler = logger.handlers[0]
+
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    handler.formatter = formatter
+    handler.setLevel(logging.DEBUG)
