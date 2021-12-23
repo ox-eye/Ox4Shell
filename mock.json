@@ -1,0 +1,17 @@
+{
+    "hostname": "ip-172-30-20-110",
+    "env": {
+        "aws_profile": "staging",
+        "user": "ubuntu",
+        "pwd": "/opt/",
+        "path": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin"
+    },
+    "sys": {
+        "java.version": "16.0.2",
+        "user.name": "ubuntu"
+    },
+    "java": {
+        "version": "Java version 16.0.2",
+        "os": "Linux 5.10.47-linuxkit unknown, architecture: amd64-64"
+    }
+}
