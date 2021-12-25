@@ -1,17 +1,16 @@
 import logging
-from typing import Any, Callable, Dict
+from typing import Callable, Dict
+from lib.mock import Mock
 
 logger = logging.getLogger("Ox4Shell")
 
-MockData = Dict[str, Any]
 
-
-def nop_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
+def nop_lookup(full_match: str, inner_group: str) -> str:
     return full_match
 
 
 # Handles the cases of: ${xxx:yyy:zzz:-www}
-def str_substitutor_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
+def str_substitutor_lookup(full_match: str, inner_group: str) -> str:
     parts = inner_group.split(":")
     parts_length = len(parts)
 
@@ -30,7 +29,7 @@ def str_substitutor_lookup(mock: MockData, full_match: str, inner_group: str) ->
             return ""
 
         logger.debug("Returning mock value")
-        return mock.get(inner_group.lower(), f"<{inner_group.lower()}>")
+        return Mock.mock.get(inner_group.lower(), f"<{inner_group.lower()}>")
 
     logger.debug("Got multiple values")
     # if we got here, we got some values
@@ -45,7 +44,7 @@ def str_substitutor_lookup(mock: MockData, full_match: str, inner_group: str) ->
 
 
 # Handles the cases of: ${lower:aaAAaa}
-def str_lower_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
+def str_lower_lookup(full_match: str, inner_group: str) -> str:
     if ":" not in inner_group:
         raise Exception("str_lower_lookup must contain a ':'!")
 
@@ -53,7 +52,7 @@ def str_lower_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
 
 
 # Handles the cases of: ${upper:aaAAaa}
-def str_upper_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
+def str_upper_lookup(full_match: str, inner_group: str) -> str:
     if ":" not in inner_group:
         raise Exception("str_upper_lookup must contain a ':'!")
 
@@ -61,7 +60,7 @@ def str_upper_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
 
 
 # Handles the cases of: ${date:1}
-def date_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
+def date_lookup(full_match: str, inner_group: str) -> str:
     if ":" not in inner_group:
         raise Exception("date_lookup must contain a ':'!")
 
@@ -70,7 +69,7 @@ def date_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
 
 
 # Handles the cases of: ${env:HOME} for example
-def mockable_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
+def mockable_lookup(full_match: str, inner_group: str) -> str:
     if ":" not in inner_group:
         raise Exception("mockable_lookup must contain a ':'!")
 
@@ -79,16 +78,16 @@ def mockable_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
     mock_table_key = parts[0].lower()
     mock_table_value = parts[1].lower()
 
-    mock_value: str = mock.get(mock_table_key, {}).get(mock_table_value)
+    mock_value: str = Mock.mock.get(mock_table_key, {}).get(mock_table_value)
     logger.debug(f"Got mock value of: {mock_value}")
 
     if not mock_value:
-        mock_value = str_substitutor_lookup(mock, full_match, inner_group)
+        mock_value = str_substitutor_lookup(full_match, inner_group)
 
     return mock_value
 
 
-KNOWN_LOOKUPS: Dict[str, Callable[[MockData, str, str], str]] = {
+KNOWN_LOOKUPS: Dict[str, Callable[[str, str], str]] = {
     "jndi": nop_lookup,
     "java": mockable_lookup,
     "sys": mockable_lookup,
@@ -103,9 +102,7 @@ KNOWN_LOOKUPS: Dict[str, Callable[[MockData, str, str], str]] = {
 # ${jndi:ldap://aa/a}
 # ${jndi:ldap://aa/a} , jndi:ldap://aa/a
 # handles each result we find
-def handle_match(
-    mock: MockData, full_match: str, inner_group: str, payload: str
-) -> str:
+def handle_match(full_match: str, inner_group: str, payload: str) -> str:
     lookup_identifier = inner_group.split(":", 1)[0]
 
     normalized_lookup_identifier = str(lookup_identifier).lower()
@@ -113,7 +110,7 @@ def handle_match(
 
     # try to get a handler, if no one found, use the default `str_substitutor_lookup` handler
     func = KNOWN_LOOKUPS.get(normalized_lookup_identifier, str_substitutor_lookup)
-    result = func(mock, full_match, inner_group)
+    result = func(full_match, inner_group)
 
     logger.debug(f"Executed callback: {func.__name__}({full_match=}, {result=})\n")
     payload = payload.replace(full_match, result)

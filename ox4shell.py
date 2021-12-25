@@ -1,6 +1,7 @@
 from lib.utils import setup_logger, set_debug_level
 from lib.usage import usage
 from lib.deobfuscate import deobfuscate
+from lib.mock import Mock
 from argparse import ArgumentParser, RawTextHelpFormatter
 from pathlib import Path
 import logging
@@ -18,6 +19,14 @@ def main() -> None:
         "-d", "--debug", default=False, help="Enable debug mode", action="store_true"
     )
 
+    parser.add_argument(
+        "-m",
+        "--mock",
+        default=Path("mock.json"),
+        help="The mock data JSON file",
+        type=Path,
+    )
+
     target_group = parser.add_mutually_exclusive_group(required=True)
     target_group.add_argument(
         "-p", "--payload", type=str, help="The payload to deobfuscate"
@@ -30,6 +39,10 @@ def main() -> None:
 
     if args.debug:
         set_debug_level(logger)
+
+    if args.mock:
+        logger.debug(f"Using mock file: {args.mock}")
+        Mock.populate(args.mock)
 
     if args.payload:
         deobfuscated = deobfuscate(args.payload)

@@ -1,10 +1,9 @@
-from lib.utils import read_mock_data, find_patterns
+from lib.utils import find_patterns
 from lib.lookups import handle_match
 import logging
 
 logger = logging.getLogger("Ox4Shell")
 
-mock = read_mock_data()
 MAX_DEPTH = 150
 
 
@@ -23,7 +22,7 @@ def deobfuscate_patterns(payload: str) -> str:
     logger.debug(f"Found full text to replace: {full_match=}")
     logger.debug(f"Found text to lookup by: {inner_group=}")
 
-    payload = handle_match(mock, full_match, inner_group, payload)
+    payload = handle_match(full_match, inner_group, payload)
     return payload
 
 
