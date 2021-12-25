@@ -42,7 +42,7 @@ def set_debug_level(logger: logging.Logger) -> None:
     handler: logging.Handler = logger.handlers[0]
 
     formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        "%(asctime)s - %(name)s - %(filename)s:%(lineno)s at %(funcName)s() - %(levelname)s - %(message)s"
     )
     handler.formatter = formatter
     logger.setLevel(logging.DEBUG)

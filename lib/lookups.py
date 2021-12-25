@@ -17,23 +17,30 @@ def str_substitutor_lookup(mock: MockData, full_match: str, inner_group: str) ->
 
     # no values, return the full match
     if parts_length == 0:
+        logger.debug("No values found, returning full match")
         return full_match
 
     # single variable
     if parts_length == 1:
+        logger.debug("Got a single variable back")
 
         # empty brackets (${})
         if parts[0] == "":
+            logger.debug("Found empty brackets")
             return ""
 
+        logger.debug("Returning mock value")
         return mock.get(inner_group.lower(), f"<{inner_group.lower()}>")
 
+    logger.debug("Got multiple values")
     # if we got here, we got some values
     # get the default one (last)
     if inner_group.count(":-") > 0:
+        logger.debug("Returning default value")
         return inner_group.split(":-", 1)[-1]
 
     # no default value provided, return the key
+    logger.debug("No default value found, returning the key instead")
     return parts[1]
 
 
@@ -73,6 +80,7 @@ def mockable_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
     mock_table_value = parts[1].lower()
 
     mock_value: str = mock.get(mock_table_key, {}).get(mock_table_value)
+    logger.debug(f"Got mock value of: {mock_value}")
 
     if not mock_value:
         mock_value = str_substitutor_lookup(mock, full_match, inner_group)
@@ -107,7 +115,7 @@ def handle_match(
     func = KNOWN_LOOKUPS.get(normalized_lookup_identifier, str_substitutor_lookup)
     result = func(mock, full_match, inner_group)
 
-    logger.debug(f"Executing callback: {func.__name__}({full_match=}, {result=})\n")
+    logger.debug(f"Executed callback: {func.__name__}({full_match=}, {result=})\n")
     payload = payload.replace(full_match, result)
 
     return payload
