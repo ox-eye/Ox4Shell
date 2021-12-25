@@ -6,7 +6,7 @@ logger = logging.getLogger("Ox4Shell")
 MockData = Dict[str, Any]
 
 
-def nop_lookup(mock: MockData, full_match: str, _: str) -> str:
+def nop_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
     return full_match
 
 
@@ -38,7 +38,7 @@ def str_substitutor_lookup(mock: MockData, full_match: str, inner_group: str) ->
 
 
 # Handles the cases of: ${lower:aaAAaa}
-def str_lower_lookup(mock: MockData, _: str, inner_group: str) -> str:
+def str_lower_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
     if ":" not in inner_group:
         raise Exception("str_lower_lookup must contain a ':'!")
 
@@ -46,7 +46,7 @@ def str_lower_lookup(mock: MockData, _: str, inner_group: str) -> str:
 
 
 # Handles the cases of: ${upper:aaAAaa}
-def str_upper_lookup(mock: MockData, _: str, inner_group: str) -> str:
+def str_upper_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
     if ":" not in inner_group:
         raise Exception("str_upper_lookup must contain a ':'!")
 
@@ -54,7 +54,7 @@ def str_upper_lookup(mock: MockData, _: str, inner_group: str) -> str:
 
 
 # Handles the cases of: ${date:1}
-def date_lookup(mock: MockData, _: str, inner_group: str) -> str:
+def date_lookup(mock: MockData, full_match: str, inner_group: str) -> str:
     if ":" not in inner_group:
         raise Exception("date_lookup must contain a ':'!")
 
