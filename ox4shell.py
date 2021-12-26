@@ -6,7 +6,6 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from pathlib import Path
 import logging
 
-
 logger = logging.getLogger("Ox4Shell")
 setup_logger(logger)
 
@@ -40,9 +39,8 @@ def main() -> None:
     if args.debug:
         set_debug_level(logger)
 
-    if args.mock:
-        logger.debug(f"Using mock file: {args.mock}")
-        Mock.populate(args.mock)
+    logger.debug(f"Using mock file: {args.mock}")
+    Mock.populate(args.mock)
 
     if args.payload:
         deobfuscated = deobfuscate(args.payload)

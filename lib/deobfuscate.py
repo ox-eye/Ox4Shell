@@ -1,5 +1,5 @@
 from lib.utils import find_patterns
-from lib.lookups import handle_match
+from lib.lookups import handle_match, update_lookup_table
 import logging
 
 logger = logging.getLogger("Ox4Shell")
@@ -27,6 +27,8 @@ def deobfuscate_patterns(payload: str) -> str:
 
 
 def deobfuscate(payload: str) -> str:
+    update_lookup_table()
+
     for i in range(MAX_DEPTH):
         logger.debug(f"Entering iteration #{i}")
 
