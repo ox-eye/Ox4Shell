@@ -11,10 +11,17 @@ logger = getLogger("Ox4Shell")
 
 
 def left_pad_with_zeros(text: str, zeros_count: int) -> str:
+    """
+    Pads a string with zeros from the left
+    """
     return (zeros_count * "0") + text
 
 
 def parse_text(now: datetime, key: str, group: List[str]) -> str:
+    """
+    Handles the Text presentation
+    https://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html#text
+    """
     # Era designator
     if key == "G":
         # no length implications
@@ -38,6 +45,10 @@ def parse_text(now: datetime, key: str, group: List[str]) -> str:
 
 
 def parse_year(now: datetime, key: str, group: List[str]) -> str:
+    """
+    Handles the Year presentation
+    https://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html#year
+    """
     # TODO: capital Y should have a special care, for now treat as the same
     if key not in {"y", "Y"}:
         raise Exception(f"Unknown character {key} for parse_year")
@@ -54,6 +65,10 @@ def parse_year(now: datetime, key: str, group: List[str]) -> str:
 
 
 def parse_month(now: datetime, key: str, group: List[str]) -> str:
+    """
+    Handles the Month presentation
+    https://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html#month
+    """
     if key != "M":
         raise Exception(f"Unknown character {key} for parse_month")
 
@@ -72,6 +87,10 @@ def parse_month(now: datetime, key: str, group: List[str]) -> str:
 
 
 def parse_number(now: datetime, key: str, group: List[str]) -> str:
+    """
+    Handles the Number presentation
+    https://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html#number
+    """
     formatted_now = None
 
     # Week in year
@@ -136,8 +155,12 @@ def parse_number(now: datetime, key: str, group: List[str]) -> str:
 
 
 def parse_general_timezone(now: datetime, key: str, group: List[str]) -> str:
-    # currently only mocking data, not reason to
-    # reveal the true timezone in the payload
+    """
+    Handles the General Timezone presentation
+    https://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html#timezone
+
+    Currently only mocking data, not reason to reveal the true timezone in the payload
+    """
     if key != "z":
         raise Exception(f"Unknown character {key} for parse_general_timezone")
 
@@ -148,8 +171,12 @@ def parse_general_timezone(now: datetime, key: str, group: List[str]) -> str:
 
 
 def parse_rfc_822_timezone(now: datetime, key: str, group: List[str]) -> str:
-    # currently only mocking data, not reason to
-    # reveal the true timezone in the payload
+    """
+    Handles the RFC 822 Timezone presentation
+    https://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html#rfc822timezone
+
+    Currently only mocking data, not reason to reveal the true timezone in the payload
+    """
     if key != "Z":
         raise Exception(f"Unknown character {key} for parse_rfc_822_timezone")
 
@@ -190,6 +217,9 @@ mapping: Dict[str, ParseFunc] = {
 
 
 def parse_date(date_text: str) -> str:
+    """
+    Parses a given date through approximately the same logic as the Java counterpart
+    """
     parts: List[str] = []
     now = datetime.now()
     logger.debug(f"Parsing date according to: {now=}")

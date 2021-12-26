@@ -11,6 +11,9 @@ NESTED_PATTERN_REGEX = re.compile(r"(\$\{(.*)\})")
 
 
 def find_patterns(text: str) -> Iterator[Tuple[str, str]]:
+    """
+    Finds on a given payload pattern according to the logic above
+    """
     for result in SIMPLE_PATTERN_REGEX.findall(text):
         yield result
 
@@ -19,6 +22,9 @@ def find_patterns(text: str) -> Iterator[Tuple[str, str]]:
 
 
 def setup_logger(logger: logging.Logger) -> None:
+    """
+    Utility function to set up a logger
+    """
     logger.setLevel(logging.INFO)
 
     handler = logging.StreamHandler(sys.stdout)
@@ -29,6 +35,9 @@ def setup_logger(logger: logging.Logger) -> None:
 
 
 def set_debug_level(logger: logging.Logger) -> None:
+    """
+    Utility function to set a logger's level to DEBUG
+    """
     handler: logging.Handler = logger.handlers[0]
 
     formatter = logging.Formatter(

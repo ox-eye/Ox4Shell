@@ -8,6 +8,11 @@ DEFAULT_MAX_DEPTH = 150
 
 
 def deobfuscate_patterns(payload: str) -> str:
+    """
+    An internal deobfuscation pattern that operates on a given payload by the researched patterns:
+        - `lib/utils.py:SIMPLE_PATTERN_REGEX`
+        - `lib/utils.py:NESTED_PATTERN_REGEX`
+    """
     pattern = next(find_patterns(payload), None)
     logger.debug(f"Got deobfuscation pattern - {pattern}")
 
@@ -27,6 +32,9 @@ def deobfuscate_patterns(payload: str) -> str:
 
 
 def deobfuscate(payload: str, max_depth: int = DEFAULT_MAX_DEPTH) -> str:
+    """
+    The public method to deobfuscates a payload.
+    """
     update_lookup_table_with_mock()
 
     for i in range(max_depth):

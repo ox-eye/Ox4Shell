@@ -5,14 +5,36 @@ from lib.date_parser import parse_date
 from lib.mock import Mock
 
 logger = logging.getLogger("Ox4Shell")
+LookupFunction = Callable[[str, str], str]
+
+
+def handle_single_value(func: LookupFunction) -> LookupFunction:
+    """
+    Enforces the lookup function to have 2 values.
+    If not provided, it will check if it exists as a lookup key.
+        If it does, return the full match, since we don't have anything to replace it with.
+    If it doesn't - raise an exception
+    """
+    def wrapper(full_match: str, inner_group: str) -> str:
+        if ":" not in inner_group:
+            if inner_group in KNOWN_LOOKUPS:
+                logger.debug("No variable to lookup, returning full match")
+                return full_match
+
+            raise Exception(f"{func.__name__} must contain a ':'!")
+
+        return func(full_match, inner_group)
+
+    return wrapper
 
 
 def nop_lookup(full_match: str, inner_group: str) -> str:
+    """ Does nothing other than returning the full match """
     return full_match
 
 
-# Handles the cases of: ${xxx:yyy:zzz:-www}
 def str_substitutor_lookup(full_match: str, inner_group: str) -> str:
+    """ Handles the cases of: ${xxx:yyy:zzz:-www}   """
     parts = inner_group.split(":")
     parts_length = len(parts)
 
@@ -33,9 +55,6 @@ def str_substitutor_lookup(full_match: str, inner_group: str) -> str:
         logger.debug("Not empty, so returning full match")
         return full_match
 
-        # logger.debug("Returning mock value")
-        # return Mock.mock.get(inner_group.lower(), f"<{inner_group.lower()}>")
-
     logger.debug("Got multiple values")
     # if we got here, we got some values
     # get the default one (last)
@@ -48,48 +67,28 @@ def str_substitutor_lookup(full_match: str, inner_group: str) -> str:
     return full_match
 
 
-# Handles the cases of: ${lower:aaAAaa}
+@handle_single_value
 def str_lower_lookup(full_match: str, inner_group: str) -> str:
-    if ":" not in inner_group:
-        if inner_group in KNOWN_LOOKUPS:
-            logger.debug("No variable to lookup, returning full match")
-            return full_match
-
-        raise Exception("str_lower_lookup must contain a ':'!")
-
-    # ignore default values
+    """ Handles the cases of: ${lower:aaAAaa} """
     inner_group = inner_group.split(":-", 1)[0]
-
     return inner_group.split(":", 1)[1].lower()
 
 
-# Handles the cases of: ${upper:aaAAaa}
+@handle_single_value
 def str_upper_lookup(full_match: str, inner_group: str) -> str:
-    if ":" not in inner_group:
-        if inner_group in KNOWN_LOOKUPS:
-            logger.debug("No variable to lookup, returning full match")
-            return full_match
-
-        raise Exception("str_upper_lookup must contain a ':'!")
-
+    """ Handles the cases of: ${upper:aaAAaa} """
     # ignore default values
     inner_group = inner_group.split(":-", 1)[0]
-
     return inner_group.split(":", 1)[1].upper()
 
 
-# Handles the cases of: ${date:1}, ${date:Y}, ${date:Y:-j}
-# There are cases where the date formatting in Python is different
-# than the date formatting in Java, so minor discrepancies might
-# occur, but the general direction is the same
+@handle_single_value
 def date_lookup(full_match: str, inner_group: str) -> str:
-    if ":" not in inner_group:
-        if inner_group in KNOWN_LOOKUPS:
-            logger.debug("No variable to lookup, returning full match")
-            return full_match
-
-        raise Exception("date_lookup must contain a ':'!")
-
+    """
+    Handles the cases of: ${date:1}, ${date:Y}, ${date:Y:-j}
+    There are cases where the date formatting in Python is different than the date formatting in Java,
+    so minor discrepancies might occur, but the general direction is the same.
+    """
     value_group = inner_group.split(":", 1)[1]
     date_values = value_group.split(":-", 1)[0]
 
@@ -98,8 +97,8 @@ def date_lookup(full_match: str, inner_group: str) -> str:
     return parse_date(date_values)
 
 
-# Handles the cases of: ${env:HOME} for example
 def mockable_lookup(full_match: str, inner_group: str) -> str:
+    """ Handles the cases of: ${env:HOME} for example """
     # only key scenario
     if ":" not in inner_group:
         normalized_lookup_id = inner_group.lower()
@@ -135,7 +134,7 @@ def mockable_lookup(full_match: str, inner_group: str) -> str:
     return str(mock_value)
 
 
-KNOWN_LOOKUPS: Dict[str, Callable[[str, str], str]] = {
+KNOWN_LOOKUPS: Dict[str, LookupFunction] = {
     "jndi": nop_lookup,
     "os": str_substitutor_lookup,
     "lower": str_lower_lookup,
@@ -145,13 +144,14 @@ KNOWN_LOOKUPS: Dict[str, Callable[[str, str], str]] = {
 
 
 def update_lookup_table_with_mock() -> None:
+    """ Updates the `KNOWN_LOOKUPS` table with values from the `mock.json` file """
     for key in Mock.mock:
         logger.debug(f"Added a mockable key: {key}")
         KNOWN_LOOKUPS[key] = mockable_lookup
 
 
-# handles each result we find
 def handle_match(full_match: str, inner_group: str, payload: str) -> str:
+    """ Handles each result we find """
     lookup_identifier = inner_group.split(":", 1)[0]
 
     normalized_lookup_identifier = lookup_identifier.lower()
