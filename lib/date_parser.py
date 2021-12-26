@@ -9,8 +9,8 @@ logger = getLogger("Ox4Shell")
 # Adjusted from the Java docs - https://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html
 
 
-def left_pad_with_zeros(text: str, zeroes_count: int) -> str:
-    return (zeroes_count * "0") + text
+def left_pad_with_zeros(text: str, zeros_count: int) -> str:
+    return (zeros_count * "0") + text
 
 
 def parse_text(now: datetime, key: str, group: List[str]) -> str:
@@ -23,10 +23,10 @@ def parse_text(now: datetime, key: str, group: List[str]) -> str:
     if key == "E":
         # full form
         if len(group) >= 4:
-            return now.strftime(r"%A")
+            return now.strftime("%A")
+
         # abbreviated form
-        else:
-            return now.strftime(r"%a")
+        return now.strftime("%a")
 
     # Am/pm marker
     if key == "a":
@@ -42,11 +42,12 @@ def parse_year(now: datetime, key: str, group: List[str]) -> str:
         group_length = len(group)
 
         if group_length == 2:
-            return now.strftime(r"%y")
-        else:
-            formatted_now = now.strftime(r"%Y")
-            padding = group_length - len(formatted_now)
-            return left_pad_with_zeros(formatted_now, padding)
+            return now.strftime("%y")
+
+        formatted_now = now.strftime("%Y")
+        padding = group_length - len(formatted_now)
+
+        return left_pad_with_zeros(formatted_now, padding)
 
     raise Exception(f"Unknown character {key} for parse_year")
 
@@ -57,15 +58,14 @@ def parse_month(now: datetime, key: str, group: List[str]) -> str:
 
         # Month as a zero-padded decimal number (01, 02, …, 12)
         if group_length <= 2:
-            return now.strftime(r"%m")
+            return now.strftime("%m")
 
         # Month as locale’s abbreviated name (Jan, Feb, …)
         if group_length == 3:
-            return now.strftime(r"%b")
+            return now.strftime("%b")
 
         # Month as locale’s full name.
-        else:
-            return now.strftime(r"%B")
+        return now.strftime(r"%B")
 
     raise Exception(f"Unknown character {key} for parse_month")
 
@@ -75,7 +75,7 @@ def parse_number(now: datetime, key: str, group: List[str]) -> str:
 
     # Week in year
     if key == "w":
-        formatted_now = now.strftime(r"%U").lstrip("0") or "0"
+        formatted_now = now.strftime("%U").lstrip("0") or "0"
 
     # Week in month
     if key == "W":
@@ -85,46 +85,46 @@ def parse_number(now: datetime, key: str, group: List[str]) -> str:
 
     # Day in year
     if key == "D":
-        formatted_now = now.strftime(r"%j").lstrip("0") or "0"
+        formatted_now = now.strftime("%j").lstrip("0") or "0"
 
     # Day in month
     if key == "d":
-        formatted_now = now.strftime(r"%d").lstrip("0") or "0"
+        formatted_now = now.strftime("%d").lstrip("0") or "0"
 
     # Day of week in month
     if key == "F":
-        day_in_month = int(now.strftime(r"%d").lstrip("0"))
+        day_in_month = int(now.strftime("%d").lstrip("0"))
         formatted_now = str(ceil(day_in_month / 7))
 
     # Hour in day (0-23)
     if key == "H":
-        formatted_now = now.strftime(r"%H").lstrip("0") or "0"
+        formatted_now = now.strftime("%H").lstrip("0") or "0"
 
     # Hour in day (1-24)
     if key == "k":
-        hours = int(now.strftime(r"%H").lstrip("0") or "0")  # this gives 0-23
+        hours = int(now.strftime("%H").lstrip("0") or "0")  # this gives 0-23
         formatted_now = str(hours + 1)
 
     # Hour in am/pm (0-11)
     if key == "K":
-        hours = int(now.strftime(r"%I").lstrip("0") or "0")  # this gives 1-12
+        hours = int(now.strftime("%I").lstrip("0") or "0")  # this gives 1-12
         formatted_now = str(hours - 1)
 
     # Hour in am/pm (1-12)
     if key == "h":
-        formatted_now = now.strftime(r"%I").lstrip("0")
+        formatted_now = now.strftime("%I").lstrip("0")
 
     # Minute in hour
     if key == "m":
-        formatted_now = now.strftime(r"%M").lstrip("0")
+        formatted_now = now.strftime("%M").lstrip("0")
 
     # Second in minute
     if key == "s":
-        formatted_now = now.strftime(r"%S").lstrip("0")
+        formatted_now = now.strftime("%S").lstrip("0")
 
     # Millisecond
     if key == "S":
-        microseconds = int(now.strftime(r"%f").lstrip("0") or "0")
+        microseconds = int(now.strftime("%f").lstrip("0") or "0")
         formatted_now = str(floor(microseconds / 1_000))
 
     if formatted_now:
@@ -150,7 +150,6 @@ def parse_general_timezone(now: datetime, key: str, group: List[str]) -> str:
 def parse_rfc_822_timezone(now: datetime, key: str, group: List[str]) -> str:
     # currently only mocking data, not reason to
     # reveal the true timezone in the payload
-
     if key == "Z":
         return "+0000"
 
@@ -191,9 +190,8 @@ mapping: Dict[str, ParseFunc] = {
 
 
 def parse_date(date_text: str) -> str:
-    parts = []
+    parts: List[str] = []
     now = datetime.now()
-
     logger.debug(f"Parsing date according to: {now=}")
 
     for key, group in groupby(date_text):
