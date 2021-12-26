@@ -82,7 +82,7 @@ def parse_number(now: datetime, key: str, group: List[str]) -> str:
     if key == "W":
         first_day = now.replace(day=2)
         dom = now.day + first_day.weekday()
-        formatted_now = str(int(ceil(dom / 7.0)))
+        formatted_now = str(ceil(dom / 7.0))
 
     # Day in year
     if key == "D":
@@ -95,7 +95,7 @@ def parse_number(now: datetime, key: str, group: List[str]) -> str:
     # Day of week in month
     if key == "F":
         day_in_month = int(now.strftime("%d").lstrip("0"))
-        formatted_now = str(ceil(day_in_month / 7))
+        formatted_now = str(ceil(day_in_month / 7.0))
 
     # Hour in day (0-23)
     if key == "H":
