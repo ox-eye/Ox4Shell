@@ -6,7 +6,7 @@ Deobfuscate Log4Shell payloads with ease.
 Since the release of the Log4Shell vulnerability (CVE-2021-44228), many tools were created to obfuscate Log4Shell payloads,
 making the lives of security engineers a nightmare.
 
-This tool intends to unravel the true contents of obfuscated Log4Shell payloads.
+This tool intends to unravel the true contents of obfuscated Log4Shell payloads. 
 
 For example, consider the following obfuscated payload:
 ```text
@@ -56,7 +56,7 @@ if the payload contains the value `${env:HOME}`, we can replace it with a custom
 The default set of mock data provided is:
 ```json
 {
-    "hostname": "ip-172-30-20-110",
+    "hostname": "ip-127.0.0.1",
     "env": {
         "aws_profile": "staging",
         "user": "ubuntu",
@@ -69,9 +69,14 @@ The default set of mock data provided is:
     },
     "java": {
         "version": "Java version 16.0.2",
-        "os": "Linux 5.10.47-linuxkit unknown, architecture: amd64-64"
+        "runtime": "OpenJDK Runtime Environment (build 1.8.0_181-b13) from Oracle Corporation",
+        "vm": "OpenJDK 64-Bit Server VM (build 25.181-b13, mixed mode)",
+        "os": "Linux 5.10.47-linuxkit unknown, architecture: amd64-64",
+        "locale": "default locale: en_US, platform encoding: UTF-8",
+        "hw": "processors: 1, architecture: amd64-64"
     }
 }
+
 ```
 
 As an example, we can deobfuscate the following payload using the Ox4Shell's mocking capability:
