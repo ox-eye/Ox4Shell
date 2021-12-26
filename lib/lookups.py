@@ -1,6 +1,9 @@
 import logging
 from typing import Callable, Dict
+from lib.date_parser import parse_date
 from lib.mock import Mock
+from datetime import datetime
+import string
 
 logger = logging.getLogger("Ox4Shell")
 
@@ -59,13 +62,20 @@ def str_upper_lookup(full_match: str, inner_group: str) -> str:
     return inner_group.split(":", 1)[1].upper()
 
 
-# Handles the cases of: ${date:1}
+# Handles the cases of: ${date:1}, ${date:Y}, ${date:Y:-j}
+# There are cases where the date formatting in Python is different
+# than the date formatting in Java, so minor discrepencies might
+# occur, but the general direction is the same
 def date_lookup(full_match: str, inner_group: str) -> str:
     if ":" not in inner_group:
         raise Exception("date_lookup must contain a ':'!")
 
-    # the value is wrapped with quotes, so we remove them
-    return inner_group.split(":", 1)[1][1:-1]
+    value_group = inner_group.split(":", 1)[1]
+    date_values = value_group.split(":-", 1)[0]
+
+    logger.debug(f"Going to parse dates for: {date_values}")
+
+    return parse_date(date_values)
 
 
 # Handles the cases of: ${env:HOME} for example
