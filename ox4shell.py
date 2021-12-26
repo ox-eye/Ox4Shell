@@ -44,7 +44,7 @@ def main() -> None:
         "-f",
         "--file",
         type=Path,
-        help="A file containing payloads (delimited by newline)",
+        help="A file containing payloads delimited by newline",
     )
 
     args = parser.parse_args()
