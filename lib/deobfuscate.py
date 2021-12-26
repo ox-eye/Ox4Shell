@@ -4,7 +4,7 @@ import logging
 
 logger = logging.getLogger("Ox4Shell")
 
-MAX_DEPTH = 150
+DEFAULT_MAX_DEPTH = 150
 
 
 def deobfuscate_patterns(payload: str) -> str:
@@ -26,13 +26,13 @@ def deobfuscate_patterns(payload: str) -> str:
     return payload
 
 
-def deobfuscate(payload: str) -> str:
+def deobfuscate(payload: str, max_depth: int = DEFAULT_MAX_DEPTH) -> str:
     update_lookup_table_with_mock()
 
-    for i in range(MAX_DEPTH):
+    for i in range(max_depth):
         logger.debug(f"Entering iteration #{i}")
-
         logger.debug(f"Trying to deobfuscate {payload}")
+
         deobfuscated = deobfuscate_patterns(payload)
         logger.debug(f"Deobfuscated result is: {deobfuscated}")
 
@@ -42,4 +42,4 @@ def deobfuscate(payload: str) -> str:
 
         payload = deobfuscated
 
-    raise Exception(f"deobfuscate exceeded max depth of {MAX_DEPTH}")
+    raise Exception(f"deobfuscate exceeded max depth of {max_depth}")

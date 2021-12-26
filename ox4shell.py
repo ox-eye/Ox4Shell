@@ -1,6 +1,6 @@
 from lib.utils import setup_logger, set_debug_level
 from lib.usage import usage
-from lib.deobfuscate import deobfuscate
+from lib.deobfuscate import deobfuscate, DEFAULT_MAX_DEPTH
 from lib.mock import Mock
 from argparse import ArgumentParser, RawTextHelpFormatter
 from pathlib import Path
@@ -26,6 +26,13 @@ def main() -> None:
         type=Path,
     )
 
+    parser.add_argument(
+        "--max-depth",
+        default=DEFAULT_MAX_DEPTH,
+        help="The maximum number of iteration to perform on a given payload",
+        type=int,
+    )
+
     target_group = parser.add_mutually_exclusive_group(required=True)
     target_group.add_argument(
         "-p", "--payload", type=str, help="A single payload to deobfuscate, make sure to escape '$' signs"
@@ -43,7 +50,7 @@ def main() -> None:
     Mock.populate(args.mock)
 
     if args.payload:
-        deobfuscated = deobfuscate(args.payload)
+        deobfuscated = deobfuscate(args.payload, max_depth=args.max_depth)
         logger.info(deobfuscated)
 
     elif args.file:
@@ -52,7 +59,7 @@ def main() -> None:
 
         with args.file.open("r") as f:
             for line in f:
-                deobfuscated = deobfuscate(line.strip())
+                deobfuscated = deobfuscate(line.strip(), max_depth=args.max_depth)
                 logger.info(deobfuscated)
 
 
