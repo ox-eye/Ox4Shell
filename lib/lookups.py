@@ -35,7 +35,10 @@ def nop_lookup(full_match: str, inner_group: str) -> str:
 
 
 def str_substitutor_lookup(full_match: str, inner_group: str) -> str:
-    """Handles the cases of: ${xxx:yyy:zzz:-www}"""
+    """
+    Handles the cases of: ${xxx:yyy:zzz:-www}, based on:
+    https://logging.apache.org/log4j/2.x/log4j-core/apidocs/org/apache/logging/log4j/core/lookup/StrSubstitutor.html
+    """
     parts = inner_group.split(":")
     parts_length = len(parts)
 
