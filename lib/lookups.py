@@ -15,6 +15,7 @@ def handle_single_value(func: LookupFunction) -> LookupFunction:
         If it does, return the full match, since we don't have anything to replace it with.
     If it doesn't - raise an exception
     """
+
     def wrapper(full_match: str, inner_group: str) -> str:
         if ":" not in inner_group:
             if inner_group in KNOWN_LOOKUPS:
@@ -29,12 +30,12 @@ def handle_single_value(func: LookupFunction) -> LookupFunction:
 
 
 def nop_lookup(full_match: str, inner_group: str) -> str:
-    """ Does nothing other than returning the full match """
+    """Does nothing other than returning the full match"""
     return full_match
 
 
 def str_substitutor_lookup(full_match: str, inner_group: str) -> str:
-    """ Handles the cases of: ${xxx:yyy:zzz:-www}   """
+    """Handles the cases of: ${xxx:yyy:zzz:-www}"""
     parts = inner_group.split(":")
     parts_length = len(parts)
 
@@ -69,14 +70,14 @@ def str_substitutor_lookup(full_match: str, inner_group: str) -> str:
 
 @handle_single_value
 def str_lower_lookup(full_match: str, inner_group: str) -> str:
-    """ Handles the cases of: ${lower:aaAAaa} """
+    """Handles the cases of: ${lower:aaAAaa}"""
     inner_group = inner_group.split(":-", 1)[0]
     return inner_group.split(":", 1)[1].lower()
 
 
 @handle_single_value
 def str_upper_lookup(full_match: str, inner_group: str) -> str:
-    """ Handles the cases of: ${upper:aaAAaa} """
+    """Handles the cases of: ${upper:aaAAaa}"""
     # ignore default values
     inner_group = inner_group.split(":-", 1)[0]
     return inner_group.split(":", 1)[1].upper()
@@ -98,7 +99,7 @@ def date_lookup(full_match: str, inner_group: str) -> str:
 
 
 def mockable_lookup(full_match: str, inner_group: str) -> str:
-    """ Handles the cases of: ${env:HOME} for example """
+    """Handles the cases of: ${env:HOME} for example"""
     # only key scenario
     if ":" not in inner_group:
         normalized_lookup_id = inner_group.lower()
@@ -144,14 +145,14 @@ KNOWN_LOOKUPS: Dict[str, LookupFunction] = {
 
 
 def update_lookup_table_with_mock() -> None:
-    """ Updates the `KNOWN_LOOKUPS` table with values from the `mock.json` file """
+    """Updates the `KNOWN_LOOKUPS` table with values from the `mock.json` file"""
     for key in Mock.mock:
         logger.debug(f"Added a mockable key: {key}")
         KNOWN_LOOKUPS[key] = mockable_lookup
 
 
 def handle_match(full_match: str, inner_group: str, payload: str) -> str:
-    """ Handles each result we find """
+    """Handles each result we find"""
     lookup_identifier = inner_group.split(":", 1)[0]
 
     normalized_lookup_identifier = lookup_identifier.lower()

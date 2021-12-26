@@ -9,6 +9,7 @@ class Mock:
     """
     A class that holds the `mock.json` file contents
     """
+
     mock: MockData = {}
 
     @staticmethod
