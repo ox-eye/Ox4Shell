@@ -37,7 +37,7 @@ def parse_text(now: datetime, key: str, group: List[str]) -> str:
 
 
 def parse_year(now: datetime, key: str, group: List[str]) -> str:
-    # TODO: capital Y should have a special care
+    # TODO: capital Y should have a special care, for now treat as the same
     if key in ["y", "Y"]:
         group_length = len(group)
 
@@ -91,9 +91,10 @@ def parse_number(now: datetime, key: str, group: List[str]) -> str:
     if key == "d":
         formatted_now = now.strftime(r"%d").lstrip("0") or "0"
 
-    # Day of week in month ?
+    # Day of week in month
     if key == "F":
-        formatted_now = "4"  # TODO: implement logic
+        day_in_month = int(now.strftime(r"%d").lstrip("0"))
+        formatted_now = str(ceil(day_in_month / 7))
 
     # Hour in day (0-23)
     if key == "H":
