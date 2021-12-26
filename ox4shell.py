@@ -22,16 +22,16 @@ def main() -> None:
         "-m",
         "--mock",
         default=Path("mock.json"),
-        help="The mock data JSON file",
+        help="The location of the mock data JSON file that replaces certain values in the payload",
         type=Path,
     )
 
     target_group = parser.add_mutually_exclusive_group(required=True)
     target_group.add_argument(
-        "-p", "--payload", type=str, help="The payload to deobfuscate"
+        "-p", "--payload", type=str, help="A single payload to deobfuscate, make sure to escape '$' signs"
     )
     target_group.add_argument(
-        "-f", "--file", type=Path, help="A file containing payloads"
+        "-f", "--file", type=Path, help="A file containing payloads (delimited by newline)"
     )
 
     args = parser.parse_args()
