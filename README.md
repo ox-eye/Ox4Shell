@@ -35,16 +35,19 @@ usage: ox4shell [-h] [-d] [-m MOCK] [--max-depth MAX_DEPTH] (-p PAYLOAD | -f FIL
 Ox4Shell - Deobfuscate Log4Shell payloads with ease.
     Created by http://oxeye.io
 
-optional arguments:
+General:
   -h, --help            show this help message and exit
-  -d, --debug           Enable debug mode
-  -m MOCK, --mock MOCK  The location of the mock data JSON file that replaces certain values in the payload
+  -d, --debug           Enable debug mode (default: False)
+  -m MOCK, --mock MOCK  The location of the mock data JSON file that replaces certain values in the payload (default: mock.json)
   --max-depth MAX_DEPTH
-                        The maximum number of iteration to perform on a given payload
+                        The maximum number of iteration to perform on a given payload (default: 150)
+
+Targets:
+  Choose on which target to run Ox4Shell on
+
   -p PAYLOAD, --payload PAYLOAD
                         A single payload to deobfuscate, make sure to escape '$' signs
   -f FILE, --file FILE  A file containing payloads delimited by newline
-
 ```
 
 
