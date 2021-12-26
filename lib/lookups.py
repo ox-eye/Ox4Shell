@@ -132,7 +132,7 @@ KNOWN_LOOKUPS: Dict[str, Callable[[str, str], str]] = {
 }
 
 
-def update_lookup_table():
+def update_lookup_table() -> None:
     for key in Mock.mock.keys():
         logger.debug(f"Added a mockable key: {key}")
         KNOWN_LOOKUPS[key] = mockable_lookup
