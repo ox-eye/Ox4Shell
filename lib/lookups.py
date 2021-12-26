@@ -51,7 +51,7 @@ def str_substitutor_lookup(full_match: str, inner_group: str) -> str:
 # Handles the cases of: ${lower:aaAAaa}
 def str_lower_lookup(full_match: str, inner_group: str) -> str:
     if ":" not in inner_group:
-        if inner_group in KNOWN_LOOKUPS.keys():
+        if inner_group in KNOWN_LOOKUPS:
             logger.debug("No variable to lookup, returning full match")
             return full_match
 
@@ -66,7 +66,7 @@ def str_lower_lookup(full_match: str, inner_group: str) -> str:
 # Handles the cases of: ${upper:aaAAaa}
 def str_upper_lookup(full_match: str, inner_group: str) -> str:
     if ":" not in inner_group:
-        if inner_group in KNOWN_LOOKUPS.keys():
+        if inner_group in KNOWN_LOOKUPS:
             logger.debug("No variable to lookup, returning full match")
             return full_match
 
@@ -84,7 +84,7 @@ def str_upper_lookup(full_match: str, inner_group: str) -> str:
 # occur, but the general direction is the same
 def date_lookup(full_match: str, inner_group: str) -> str:
     if ":" not in inner_group:
-        if inner_group in KNOWN_LOOKUPS.keys():
+        if inner_group in KNOWN_LOOKUPS:
             logger.debug("No variable to lookup, returning full match")
             return full_match
 
@@ -105,7 +105,7 @@ def mockable_lookup(full_match: str, inner_group: str) -> str:
         normalized_lookup_id = inner_group.lower()
 
         # check if the key is in the Mock table
-        if normalized_lookup_id in KNOWN_LOOKUPS.keys():
+        if normalized_lookup_id in KNOWN_LOOKUPS:
             mock_value = Mock.mock.get(normalized_lookup_id)
 
             # case where we either didn't find a mock value
@@ -145,7 +145,7 @@ KNOWN_LOOKUPS: Dict[str, Callable[[str, str], str]] = {
 
 
 def update_lookup_table_with_mock() -> None:
-    for key in Mock.mock.keys():
+    for key in Mock.mock:
         logger.debug(f"Added a mockable key: {key}")
         KNOWN_LOOKUPS[key] = mockable_lookup
 
