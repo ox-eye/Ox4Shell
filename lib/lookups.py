@@ -16,8 +16,6 @@ def str_substitutor_lookup(full_match: str, inner_group: str) -> str:
     parts = inner_group.split(":")
     parts_length = len(parts)
 
-    logger.debug(f"{parts=}")
-
     # no values, return the full match
     if parts_length == 0:
         logger.debug("No values found, returning full match")
@@ -102,25 +100,39 @@ def date_lookup(full_match: str, inner_group: str) -> str:
 
 # Handles the cases of: ${env:HOME} for example
 def mockable_lookup(full_match: str, inner_group: str) -> str:
+    # only key scenario
     if ":" not in inner_group:
-        if inner_group in KNOWN_LOOKUPS.keys():
-            logger.debug("No variable to lookup, returning full match")
-            return full_match
+        normalized_lookup_id = inner_group.lower()
 
-        raise Exception("mockable_lookup must contain a ':'!")
+        # check if the key is in the Mock table
+        if normalized_lookup_id in KNOWN_LOOKUPS.keys():
+            mock_value = Mock.mock.get(normalized_lookup_id)
 
+            # case where we either didn't find a mock value
+            # or the value is the lookup object
+            if not mock_value or type(mock_value) != str:
+                logger.debug("No variable to lookup, returning full match")
+                return full_match
+
+            logger.debug("No variable to lookup, returning mock data")
+            return mock_value
+
+        # not in the Mock table, raise exception
+        raise Exception("Mockable key not found!")
+
+    # key and value scenario
     parts = inner_group.split(":", 2)
 
     mock_table_key = parts[0].lower()
     mock_table_value = parts[1].lower()
 
-    mock_value: str = Mock.mock.get(mock_table_key, {}).get(mock_table_value)
+    mock_value = Mock.mock.get(mock_table_key, {}).get(mock_table_value)
     logger.debug(f"Got mock value of: {mock_value}")
 
     if not mock_value:
         mock_value = str_substitutor_lookup(full_match, inner_group)
 
-    return mock_value
+    return str(mock_value)
 
 
 KNOWN_LOOKUPS: Dict[str, Callable[[str, str], str]] = {
@@ -132,7 +144,7 @@ KNOWN_LOOKUPS: Dict[str, Callable[[str, str], str]] = {
 }
 
 
-def update_lookup_table() -> None:
+def update_lookup_table_with_mock() -> None:
     for key in Mock.mock.keys():
         logger.debug(f"Added a mockable key: {key}")
         KNOWN_LOOKUPS[key] = mockable_lookup
@@ -144,7 +156,7 @@ def update_lookup_table() -> None:
 def handle_match(full_match: str, inner_group: str, payload: str) -> str:
     lookup_identifier = inner_group.split(":", 1)[0]
 
-    normalized_lookup_identifier = str(lookup_identifier).lower()
+    normalized_lookup_identifier = lookup_identifier.lower()
     logger.debug(f"Looking up the callback for: {normalized_lookup_identifier=}")
 
     # try to get a handler, if no one found, use the default `str_substitutor_lookup` handler
