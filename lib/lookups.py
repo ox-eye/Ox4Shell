@@ -150,8 +150,6 @@ def update_lookup_table_with_mock() -> None:
         KNOWN_LOOKUPS[key] = mockable_lookup
 
 
-# ${jndi:ldap://aa/a}
-# ${jndi:ldap://aa/a}, jndi:ldap://aa/a
 # handles each result we find
 def handle_match(full_match: str, inner_group: str, payload: str) -> str:
     lookup_identifier = inner_group.split(":", 1)[0]

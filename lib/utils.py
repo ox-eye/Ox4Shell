@@ -3,7 +3,10 @@ from typing import Tuple, Iterator
 import logging
 import sys
 
+# Find simple patterns of ${...}, without any nested occurrences of ${...}
 SIMPLE_PATTERN_REGEX = re.compile(r"(\$\{([^{}]*?)\})")
+
+# Find nested patterns of ${...}, where we might find nested ${...} occurrences
 NESTED_PATTERN_REGEX = re.compile(r"(\$\{(.*)\})")
 
 

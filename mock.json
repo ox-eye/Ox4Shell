@@ -1,5 +1,5 @@
 {
-    "hostname": "ip-172-30-20-110",
+    "hostname": "ip-127.0.0.1",
     "env": {
         "aws_profile": "staging",
         "user": "ubuntu",

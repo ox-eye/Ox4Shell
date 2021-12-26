@@ -39,7 +39,7 @@ def parse_text(now: datetime, key: str, group: List[str]) -> str:
 
 def parse_year(now: datetime, key: str, group: List[str]) -> str:
     # TODO: capital Y should have a special care, for now treat as the same
-    if key not in ["y", "Y"]:
+    if key not in {"y", "Y"}:
         raise Exception(f"Unknown character {key} for parse_year")
 
     group_length = len(group)

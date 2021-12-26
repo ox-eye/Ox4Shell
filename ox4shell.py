@@ -46,7 +46,7 @@ def main() -> None:
         deobfuscated = deobfuscate(args.payload)
         logger.info(deobfuscated)
 
-    if args.file:
+    elif args.file:
         if not args.file.exists():
             raise Exception(f"File {args.file} does not exists!")
 
