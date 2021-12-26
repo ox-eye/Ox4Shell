@@ -38,36 +38,36 @@ def parse_text(now: datetime, key: str, group: List[str]) -> str:
 
 def parse_year(now: datetime, key: str, group: List[str]) -> str:
     # TODO: capital Y should have a special care, for now treat as the same
-    if key in ["y", "Y"]:
-        group_length = len(group)
+    if key not in ["y", "Y"]:
+        raise Exception(f"Unknown character {key} for parse_year")
 
-        if group_length == 2:
-            return now.strftime("%y")
+    group_length = len(group)
 
-        formatted_now = now.strftime("%Y")
-        padding = group_length - len(formatted_now)
+    if group_length == 2:
+        return now.strftime("%y")
 
-        return left_pad_with_zeros(formatted_now, padding)
+    formatted_now = now.strftime("%Y")
+    padding = group_length - len(formatted_now)
 
-    raise Exception(f"Unknown character {key} for parse_year")
+    return left_pad_with_zeros(formatted_now, padding)
 
 
 def parse_month(now: datetime, key: str, group: List[str]) -> str:
-    if key == "M":
-        group_length = len(group)
+    if key != "M":
+        raise Exception(f"Unknown character {key} for parse_month")
 
-        # Month as a zero-padded decimal number (01, 02, …, 12)
-        if group_length <= 2:
-            return now.strftime("%m")
+    group_length = len(group)
 
-        # Month as locale’s abbreviated name (Jan, Feb, …)
-        if group_length == 3:
-            return now.strftime("%b")
+    # Month as a zero-padded decimal number (01, 02, …, 12)
+    if group_length <= 2:
+        return now.strftime("%m")
 
-        # Month as locale’s full name.
-        return now.strftime("%B")
+    # Month as locale’s abbreviated name (Jan, Feb, …)
+    if group_length == 3:
+        return now.strftime("%b")
 
-    raise Exception(f"Unknown character {key} for parse_month")
+    # Month as locale’s full name.
+    return now.strftime("%B")
 
 
 def parse_number(now: datetime, key: str, group: List[str]) -> str:
@@ -137,23 +137,22 @@ def parse_number(now: datetime, key: str, group: List[str]) -> str:
 def parse_general_timezone(now: datetime, key: str, group: List[str]) -> str:
     # currently only mocking data, not reason to
     # reveal the true timezone in the payload
+    if key != "z":
+        raise Exception(f"Unknown character {key} for parse_general_timezone")
 
-    if key == "z":
-        if len(group) < 4:
-            return "GMT"
+    if len(group) < 4:
+        return "GMT"
 
-        return "Greenwich Mean Time"
-
-    raise Exception(f"Unknown character {key} for parse_general_timezone")
+    return "Greenwich Mean Time"
 
 
 def parse_rfc_822_timezone(now: datetime, key: str, group: List[str]) -> str:
     # currently only mocking data, not reason to
     # reveal the true timezone in the payload
-    if key == "Z":
-        return "+0000"
+    if key != "Z":
+        raise Exception(f"Unknown character {key} for parse_rfc_822_timezone")
 
-    raise Exception(f"Unknown character {key} for parse_rfc_822_timezone")
+    return "+0000"
 
 
 def parse_noop(now: datetime, key: str, group: List[str]) -> str:
