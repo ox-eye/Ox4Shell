@@ -65,7 +65,7 @@ def parse_month(now: datetime, key: str, group: List[str]) -> str:
             return now.strftime("%b")
 
         # Month as locale’s full name.
-        return now.strftime(r"%B")
+        return now.strftime("%B")
 
     raise Exception(f"Unknown character {key} for parse_month")
 
