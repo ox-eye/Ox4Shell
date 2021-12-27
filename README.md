@@ -33,7 +33,7 @@ usage: ox4shell [-h] [-d] [-m MOCK] [--max-depth MAX_DEPTH] (-p PAYLOAD | -f FIL
   \____//_/\_\  |_||_____/|_| |_|\___|_|_|
 
 Ox4Shell - Deobfuscate Log4Shell payloads with ease.
-    Created by http://oxeye.io
+    Created by https://oxeye.io
 
 General:
   -h, --help            show this help message and exit
@@ -43,11 +43,11 @@ General:
                         The maximum number of iteration to perform on a given payload (default: 150)
 
 Targets:
-  Choose on which target to run Ox4Shell on
+  Choose which target payloads to run Ox4Shell on
 
   -p PAYLOAD, --payload PAYLOAD
-                        A single payload to deobfuscate, make sure to escape '$' signs
-  -f FILE, --file FILE  A file containing payloads delimited by newline
+                        A single payload to deobfuscate, make sure to escape '$' signs (default: None)
+  -f FILE, --file FILE  A file containing payloads delimited by newline (default: None)
 ```
 
 

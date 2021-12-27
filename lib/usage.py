@@ -7,5 +7,5 @@ usage = """
   \____//_/\_\  |_||_____/|_| |_|\___|_|_|
 
 Ox4Shell - Deobfuscate Log4Shell payloads with ease.
-    Created by http://oxeye.io
+    Created by https://oxeye.io
 """

@@ -46,7 +46,7 @@ def main() -> None:
     )
 
     target_group = parser.add_argument_group(
-        title="Targets", description="Choose on which target to run Ox4Shell on"
+        title="Targets", description="Choose which target payloads to run Ox4Shell on"
     )
     target_mutex_group = target_group.add_mutually_exclusive_group(required=True)
 
