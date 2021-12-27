@@ -2,7 +2,7 @@ from lib.utils import setup_logger, set_debug_level
 from lib.usage import usage
 from lib.deobfuscate import deobfuscate, DEFAULT_MAX_DEPTH
 from lib.mock import Mock
-from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentDefaultsHelpFormatter, SUPPRESS
+from argparse import ArgumentParser, RawTextHelpFormatter, ArgumentDefaultsHelpFormatter
 from pathlib import Path
 import logging
 
@@ -16,11 +16,16 @@ class CustomArgumentFormatter(ArgumentDefaultsHelpFormatter, RawTextHelpFormatte
 
 def main() -> None:
     parser = ArgumentParser(
-        prog="ox4shell", description=usage, formatter_class=CustomArgumentFormatter, add_help=False
+        prog="ox4shell",
+        description=usage,
+        formatter_class=CustomArgumentFormatter,
+        add_help=False,
     )
 
     general_group = parser.add_argument_group(title="General")
-    general_group.add_argument("-h", "--help", action="help", help="show this help message and exit")
+    general_group.add_argument(
+        "-h", "--help", action="help", help="show this help message and exit"
+    )
     general_group.add_argument(
         "-d", "--debug", default=False, help="Enable debug mode", action="store_true"
     )
@@ -40,20 +45,22 @@ def main() -> None:
         type=int,
     )
 
-    target_group = parser.add_argument_group(title="Targets", description='Choose on which target to run Ox4Shell on')
+    target_group = parser.add_argument_group(
+        title="Targets", description="Choose on which target to run Ox4Shell on"
+    )
     target_mutex_group = target_group.add_mutually_exclusive_group(required=True)
 
     target_mutex_group.add_argument(
         "-p",
         "--payload",
         type=str,
-        help="A single payload to deobfuscate, make sure to escape '$' signs"
+        help="A single payload to deobfuscate, make sure to escape '$' signs",
     )
     target_mutex_group.add_argument(
         "-f",
         "--file",
         type=Path,
-        help="A file containing payloads delimited by newline"
+        help="A file containing payloads delimited by newline",
     )
 
     args = parser.parse_args()
