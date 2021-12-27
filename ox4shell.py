@@ -47,15 +47,13 @@ def main() -> None:
         "-p",
         "--payload",
         type=str,
-        help="A single payload to deobfuscate, make sure to escape '$' signs",
-        default=SUPPRESS
+        help="A single payload to deobfuscate, make sure to escape '$' signs"
     )
     target_mutex_group.add_argument(
         "-f",
         "--file",
         type=Path,
-        help="A file containing payloads delimited by newline",
-        default=SUPPRESS
+        help="A file containing payloads delimited by newline"
     )
 
     args = parser.parse_args()
@@ -70,7 +68,7 @@ def main() -> None:
         deobfuscated = deobfuscate(args.payload, max_depth=args.max_depth)
         logger.info(deobfuscated)
 
-    elif args.file:
+    if args.file:
         if not args.file.exists():
             raise Exception(f"File {args.file} does not exists!")
 
