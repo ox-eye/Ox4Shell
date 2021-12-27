@@ -108,20 +108,20 @@ def mockable_lookup(full_match: str, inner_group: str) -> str:
         normalized_lookup_id = inner_group.lower()
 
         # check if the key is in the Mock table
-        if normalized_lookup_id in KNOWN_LOOKUPS:
-            mock_value = Mock.mock.get(normalized_lookup_id)
+        if normalized_lookup_id not in KNOWN_LOOKUPS:
+            # not in the Mock table, raise exception
+            raise Exception("Mockable key not found!")
 
-            # case where we either didn't find a mock value
-            # or the value is the lookup object
-            if not mock_value or type(mock_value) != str:
-                logger.debug("No variable to lookup, returning full match")
-                return full_match
+        mock_value = Mock.mock.get(normalized_lookup_id)
 
-            logger.debug("No variable to lookup, returning mock data")
-            return mock_value
+        # case where we either didn't find a mock value
+        # or the value is the lookup object
+        if not mock_value or type(mock_value) != str:
+            logger.debug("No variable to lookup, returning full match")
+            return full_match
 
-        # not in the Mock table, raise exception
-        raise Exception("Mockable key not found!")
+        logger.debug("No variable to lookup, returning mock data")
+        return mock_value
 
     # key and value scenario
     parts = inner_group.split(":", 2)
