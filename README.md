@@ -1,6 +1,19 @@
+
+<p align="center">
+    <img alt="Ox4Shell" src="https://uploads-ssl.webflow.com/6097a2e324b791e6c3affd6e/61cafb3f5b7c5a33af49f9fe_Ox4Shell%20Logo%20-%20Color.png"/>
+</p>
+
+<hr/>
+
+<p align="center">
+    <img alt="maintained-oxeye" src="https://img.shields.io/badge/maintained%20by-oxeye.io-blueviolet"/>
+    <img alt="python-3.8" src="https://img.shields.io/badge/python-3.8-green"/>
+    <img alt="version-1.0" src="https://img.shields.io/badge/version-1.0-blue"/>
+    <img alt="license-mit" src="https://img.shields.io/badge/license-MIT-lightgrey"/>
+</p>
+
 # Ox4Shell
 Deobfuscate Log4Shell payloads with ease.
-
 
 ## Description
 Since the release of the Log4Shell vulnerability (CVE-2021-44228), many tools were created to obfuscate Log4Shell payloads,
