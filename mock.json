@@ -1,0 +1,21 @@
+{
+    "hostname": "ip-127.0.0.1",
+    "env": {
+        "aws_profile": "staging",
+        "user": "ubuntu",
+        "pwd": "/opt/",
+        "path": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin"
+    },
+    "sys": {
+        "java.version": "16.0.2",
+        "user.name": "ubuntu"
+    },
+    "java": {
+        "version": "Java version 16.0.2",
+        "runtime": "OpenJDK Runtime Environment (build 1.8.0_181-b13) from Oracle Corporation",
+        "vm": "OpenJDK 64-Bit Server VM (build 25.181-b13, mixed mode)",
+        "os": "Linux 5.10.47-linuxkit unknown, architecture: amd64-64",
+        "locale": "default locale: en_US, platform encoding: UTF-8",
+        "hw": "processors: 1, architecture: amd64-64"
+    }
+}
