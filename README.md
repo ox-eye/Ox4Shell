@@ -1,10 +1,6 @@
-
-<p align="center">
-    <img alt="Ox4Shell" src="https://uploads-ssl.webflow.com/6097a2e324b791e6c3affd6e/61cafb3f5b7c5a33af49f9fe_Ox4Shell%20Logo%20-%20Color.png"/>
-</p>
+![Logo-Light](https://gist.githubusercontent.com/oxeye-daniel/269eb41b379cf951d95ee4a23555db74/raw/e9b937b101cfc3b2a7dab83b640189adde1da287/bright.png#gh-dark-mode-only)![Logo-Dark](https://gist.githubusercontent.com/oxeye-daniel/269eb41b379cf951d95ee4a23555db74/raw/e9b937b101cfc3b2a7dab83b640189adde1da287/dark.png#gh-light-mode-only)
 
 <hr/>
-
 <p align="center">
     <img alt="maintained-oxeye" src="https://img.shields.io/badge/maintained%20by-oxeye.io-blueviolet"/>
     <img alt="python-3.8" src="https://img.shields.io/badge/python-3.8-green"/>
