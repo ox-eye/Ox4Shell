@@ -7,7 +7,8 @@ from logging import getLogger
 logger = getLogger("Ox4Shell")
 
 
-# Adjusted from the Java docs - https://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html
+# The logic below is adjusted from the Java docs -
+# https://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html
 
 
 def left_pad_with_zeros(text: str, zeros_count: int) -> str:
@@ -184,10 +185,11 @@ def parse_rfc_822_timezone(now: datetime, key: str, group: List[str]) -> str:
 
 
 def parse_noop(now: datetime, key: str, group: List[str]) -> str:
-    if key == " ":
-        return " " * len(group)
+    """Does basically nothing"""
+    if key != " ":
+        raise Exception(f"Date parser found an unknown character: {key}")
 
-    return "".join(group)
+    return " " * len(group)
 
 
 ParseFunc = Callable[[datetime, str, List[str]], str]
@@ -219,16 +221,37 @@ mapping: Dict[str, ParseFunc] = {
 def parse_date(date_text: str) -> str:
     """
     Parses a given date through approximately the same logic as the Java counterpart
+    Strings wrapped in single quotes are treated as literal strings,
+    while others are treated as Java dates.
     """
     parts: List[str] = []
     now = datetime.now()
+    in_quotes = False
+
     logger.debug(f"Parsing date according to: {now=}")
 
     for key, group in groupby(date_text):
         consumed_group = list(group)
+
+        if in_quotes:
+            if key == "'":
+                logger.debug("ending quotes scanner")
+                in_quotes = False
+                continue
+
+            logger.debug(f"in quotes, adding values: {consumed_group}")
+            parts.extend(consumed_group)
+            continue
+
+        if key == "'":
+            logger.debug("starting quotes scanner")
+            in_quotes = True
+            continue
+
+        logger.debug("not in quotes, parsing according to date")
         func = mapping.get(key, parse_noop)
         logger.debug(
-            f"Executing parsing func: {func.__name__}({key}, {consumed_group})"
+            f"Executing parsing func: {func.__name__}({key=}, {consumed_group=})"
         )
 
         result = func(now, key, consumed_group)
