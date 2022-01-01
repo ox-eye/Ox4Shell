@@ -1,5 +1,6 @@
 from lib.utils import find_patterns
 from lib.lookups import handle_match, update_lookup_table_with_mock
+from lib.decode_payload import base64_decode_payload
 import logging
 
 logger = logging.getLogger("Ox4Shell")
@@ -18,7 +19,7 @@ def deobfuscate_patterns(payload: str) -> str:
 
     # if no pattern was found, just return the original payload
     if not pattern:
-        logger.debug(f"Pattern is empty, returning original payload")
+        logger.debug("Pattern is empty, returning original payload")
         return payload
 
     # if we found a pattern, call the handle match function
@@ -31,7 +32,7 @@ def deobfuscate_patterns(payload: str) -> str:
     return payload
 
 
-def deobfuscate(payload: str, max_depth: int = DEFAULT_MAX_DEPTH) -> str:
+def deobfuscate(payload: str, max_depth: int = DEFAULT_MAX_DEPTH, decode_base64: bool = False) -> str:
     """
     The public method to deobfuscates a payload.
     """
@@ -46,6 +47,9 @@ def deobfuscate(payload: str, max_depth: int = DEFAULT_MAX_DEPTH) -> str:
 
         if deobfuscated == payload:
             logger.debug("Payload equals deobfuscated, exiting loop")
+            if decode_base64:
+                return base64_decode_payload(deobfuscated)
+
             return deobfuscated
 
         payload = deobfuscated
