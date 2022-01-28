@@ -24,7 +24,7 @@ def main() -> None:
 
     general_group = parser.add_argument_group(title="General")
     general_group.add_argument(
-        "-h", "--help", action="help", help="show this help message and exit"
+        "-h", "--help", action="help", help="Show this help message and exit"
     )
     general_group.add_argument(
         "-d", "--debug", default=False, help="Enable debug mode", action="store_true"
@@ -45,6 +45,13 @@ def main() -> None:
         type=int,
     )
 
+    general_group.add_argument(
+        "--decode-base64",
+        default=False,
+        help="Payloads containing base64 will be decoded",
+        action="store_true",
+    )
+
     target_group = parser.add_argument_group(
         title="Targets", description="Choose which target payloads to run Ox4Shell on"
     )
@@ -56,6 +63,7 @@ def main() -> None:
         type=str,
         help="A single payload to deobfuscate, make sure to escape '$' signs",
     )
+
     target_mutex_group.add_argument(
         "-f",
         "--file",
@@ -72,7 +80,7 @@ def main() -> None:
     Mock.populate(args.mock)
 
     if args.payload:
-        deobfuscated = deobfuscate(args.payload, max_depth=args.max_depth)
+        deobfuscated = deobfuscate(args.payload, max_depth=args.max_depth, decode_base64=args.decode_base64)
         logger.info(deobfuscated)
 
     if args.file:
@@ -81,7 +89,7 @@ def main() -> None:
 
         with args.file.open("r") as f:
             for line in f:
-                deobfuscated = deobfuscate(line.strip(), max_depth=args.max_depth)
+                deobfuscated = deobfuscate(line.strip(), max_depth=args.max_depth, decode_base64=args.decode_base64)
                 logger.info(deobfuscated)
 
 
