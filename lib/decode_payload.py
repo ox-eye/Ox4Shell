@@ -9,7 +9,7 @@ logger = getLogger("Ox4Shell")
 
 # Extracts the an JNDI Log4j tag content from a tag with the form of:
 # ${jndi:ldap://<CONTENT>}
-INTERNAL_TAG_REGEX = re.compile(r"\$\{jndi:ldap://(.*?)(?:\:\-.*?)?\}")
+INTERNAL_TAG_REGEX = re.compile(r"\$\{jndi:(?:.+?)://(.*?)(?:\:\-.*?)?\}")
 
 # Extracts the command content from the full path
 EXTRACT_COMMAND_REGEX = re.compile(r"\/Basic\/Command\/Base64\/(.*?)$")
