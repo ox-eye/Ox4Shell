@@ -70,7 +70,7 @@ Targets:
 
   -p PAYLOAD, --payload PAYLOAD
                         A single payload to deobfuscate, make sure to escape '$' signs (default: None)
-  -f FILE, --file FILE  A file containing payloads delimited by newline (default: None)```
+  -f FILE, --file FILE  A file containing payloads delimited by newline (default: None)
 ```
 
 ## Mock Data
