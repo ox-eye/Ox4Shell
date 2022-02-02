@@ -70,8 +70,8 @@ Targets:
 
   -p PAYLOAD, --payload PAYLOAD
                         A single payload to deobfuscate, make sure to escape '$' signs (default: None)
-  -f FILE, --file FILE  A file containing payloads delimited by newline (default: None)```
-
+  -f FILE, --file FILE  A file containing payloads delimited by newline (default: None)
+```
 
 ## Mock Data
 The Log4j library has a few unique lookup functions, which allow users to look up environment variables, runtime 
