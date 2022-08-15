@@ -6,6 +6,7 @@
     <img alt="python-3.8" src="https://img.shields.io/badge/python-3.8-green"/>
     <img alt="version-1.1" src="https://img.shields.io/badge/version-1.1-blue"/>
     <img alt="license-mit" src="https://img.shields.io/badge/license-MIT-lightgrey"/>
+    <img alt="blackhat-arsenal" src="https://github.com/toolswatch/badges/blob/master/arsenal/usa/2022.svg"/>
 </p>
 
 # Ox4Shell
